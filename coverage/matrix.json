@@ -1,0 +1,45 @@
+{
+  "last_updated": null,
+  "techniques": {
+    "T1059.001": {
+      "name": "PowerShell",
+      "tactic": "execution",
+      "tested": false,
+      "detected": null,
+      "last_run": null,
+      "notes": null
+    },
+    "T1059.003": {
+      "name": "Windows Command Shell",
+      "tactic": "execution",
+      "tested": false,
+      "detected": null,
+      "last_run": null,
+      "notes": null
+    },
+    "T1003.001": {
+      "name": "LSASS Memory",
+      "tactic": "credential-access",
+      "tested": false,
+      "detected": null,
+      "last_run": null,
+      "notes": null
+    },
+    "T1055.001": {
+      "name": "DLL Injection",
+      "tactic": "defense-evasion",
+      "tested": false,
+      "detected": null,
+      "last_run": null,
+      "notes": null
+    },
+    "T1078": {
+      "name": "Valid Accounts",
+      "tactic": "persistence",
+      "tested": false,
+      "detected": null,
+      "last_run": null,
+      "notes": null
+    }
+  }
+}

@@ -1,0 +1,46 @@
+services:
+  caldera:
+    build:
+      context: .
+      dockerfile: caldera.Dockerfile
+      args:
+        CALDERA_VERSION: "5.3.0"
+    platform: linux/amd64
+    ports:
+      - "8888:8888"
+      - "7010:7010"
+      - "7011:7011"
+    volumes:
+      - ./attacks/atomics:/usr/src/app/plugins/atomic/data/atomic-red-team
+      - ./attacks/custom:/usr/src/app/data/abilities/custom
+    restart: unless-stopped
+
+  splunk:
+    image: splunk/splunk:latest
+    ports:
+      - "8000:8000"
+      - "8089:8089"
+      - "9997:9997"
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_PASSWORD: ${SPLUNK_PASSWORD}
+    volumes:
+      - splunk-data:/opt/splunk/var
+    restart: unless-stopped
+
+  red-agent:
+    build: ./agents/red
+    ports:
+      - "8001:8001"
+    environment:
+      CALDERA_URL: http://caldera:8888
+      CALDERA_API_KEY: ${CALDERA_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+    volumes:
+      - ./attacks:/attacks
+    depends_on:
+      - caldera
+    restart: unless-stopped
+
+volumes:
+  splunk-data:

@@ -1,6 +1,12 @@
-# Python-generated files
+.env
 __pycache__/
-*.py[oc]
+*.pyc
+.DS_Store
+
+# Caldera local config (secrets)
+config/caldera.yml
+
+# Python packaging
 build/
 dist/
 wheels/
@@ -8,3 +14,7 @@ wheels/
 
 # Virtual environments
 .venv
+
+# IDE
+.idea/
+.vscode/
