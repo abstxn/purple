@@ -15,7 +15,6 @@ from caldera_client import CalderaClient, CalderaError
 
 CALDERA_URL = os.environ.get("CALDERA_URL", "http://localhost:8888")
 CALDERA_API_KEY = os.environ.get("CALDERA_API_KEY", "")
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 caldera_client: CalderaClient | None = None
 red_agent: RedAgent | None = None
@@ -26,8 +25,6 @@ async def lifespan(app: FastAPI):
     """Initialise Caldera client and red agent at startup."""
     global caldera_client, red_agent
     caldera_client = CalderaClient(CALDERA_URL, CALDERA_API_KEY)
-    if ANTHROPIC_API_KEY:
-        os.environ["ANTHROPIC_API_KEY"] = ANTHROPIC_API_KEY
     red_agent = RedAgent(caldera_client)
     yield
 
@@ -128,3 +125,10 @@ async def chat(request: ChatRequest) -> ChatResponse:
         return ChatResponse(reply=reply)
     except Exception as exc:
         return ChatResponse(reply=f"Agent error: {exc}")
+
+
+@app.post("/reset")
+async def reset_conversation() -> dict:
+    """Clear the agent's conversation history."""
+    red_agent.reset()
+    return {"status": "conversation reset"}

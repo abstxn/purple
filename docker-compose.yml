@@ -33,9 +33,12 @@ services:
     ports:
       - "8001:8001"
     environment:
-      CALDERA_URL: http://caldera:8888
+      CALDERA_URL: ${CALDERA_URL}
       CALDERA_API_KEY: ${CALDERA_API_KEY}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434/v1}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.1:8b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./attacks:/attacks
     depends_on:

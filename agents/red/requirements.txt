@@ -1,6 +1,6 @@
 fastapi
 uvicorn
 httpx
-anthropic
+openai
 pyyaml
 pydantic

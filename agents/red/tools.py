@@ -1,17 +1,41 @@
-"""Claude tool schemas and execution dispatcher for the red agent."""
+"""OpenAI-format tool schemas and execution dispatcher for the red agent."""
 
 from __future__ import annotations
 
 from caldera_client import CalderaClient
 
-TOOLS: list[dict] = [
+SYSTEM_PROMPT = """You are a red team agent with access to Caldera, a breach \
+and attack simulation platform. Caldera has Atomic Red Team tests loaded \
+natively via its atomic plugin, so all ART techniques are available through \
+the standard Caldera abilities API.
+
+Your job is to help security engineers test their defences by executing ATT&CK \
+techniques on authorised target endpoints.
+
+When a user asks you to run an attack:
+1. Identify the most relevant ATT&CK technique(s) for their request
+2. Use list_techniques to find what is available, then get_technique_detail \
+for specifics
+3. If the user has not specified a target, call list_techniques to show \
+available agents and ask them to confirm before proceeding
+4. Run the attack with run_attack and poll with get_operation_result
+5. Report back clearly: technique ID and name, ability used, target host, \
+whether execution succeeded (exit code), and the raw output
+6. Summarise what a defender should have seen if detections were in place
+
+Always be specific about technique IDs and ability names.
+Never run attacks without a confirmed target agent paw.
+If an operation is still running, poll get_operation_result again rather \
+than giving up."""
+
+_TOOLS: list[dict] = [
     {
         "name": "list_techniques",
         "description": (
             "List ATT&CK techniques available in Caldera (including ART tests "
             "loaded via the atomic plugin) for Windows endpoints."
         ),
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "tactic": {
@@ -25,7 +49,6 @@ TOOLS: list[dict] = [
                     "type": "string",
                     "enum": ["caldera", "all"],
                     "description": "Technique source (default: all)",
-                    "default": "all",
                 },
             },
             "required": [],
@@ -37,7 +60,7 @@ TOOLS: list[dict] = [
             "Get full detail on a technique including all available "
             "Caldera abilities and ART test variants."
         ),
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "technique_id": {
@@ -55,7 +78,7 @@ TOOLS: list[dict] = [
             "If no ability_id is specified, uses the first available ability. "
             "Returns the operation_id for polling."
         ),
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "technique_id": {
@@ -81,7 +104,7 @@ TOOLS: list[dict] = [
             "Returns structured result including whether execution succeeded "
             "and raw stdout."
         ),
-        "input_schema": {
+        "parameters": {
             "type": "object",
             "properties": {
                 "operation_id": {
@@ -92,6 +115,18 @@ TOOLS: list[dict] = [
             "required": ["operation_id"],
         },
     },
+]
+
+TOOLS: list[dict] = [
+    {
+        "type": "function",
+        "function": {
+            "name": tool["name"],
+            "description": tool["description"],
+            "parameters": tool["parameters"],
+        },
+    }
+    for tool in _TOOLS
 ]
 
 

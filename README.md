@@ -24,7 +24,7 @@ Splunk (:8000) and blue agent — iteration 2.
 
 - Docker and Docker Compose
 - Git
-- An Anthropic API key
+- [Ollama](https://ollama.com/) running on the host with `llama3.1:8b` pulled
 - A Windows VM with the Caldera sandcat agent installed (for actual attack execution)
 
 ## Setup
@@ -37,14 +37,18 @@ cd <repo>
 # 2. Initialise the ART submodule
 git submodule update --init --recursive
 
-# 3. Set up config
+# 3. Start Ollama on the host and pull the model
+brew services start ollama   # macOS
+ollama pull llama3.1:8b
+
+# 4. Set up config
 cp .env.example .env
-# Fill in CALDERA_API_KEY and ANTHROPIC_API_KEY in .env
+# Fill in CALDERA_API_KEY in .env (OLLAMA_* defaults work for Docker Desktop)
 
 cp config/caldera.example.yml config/caldera.yml
 # Fill in credentials in config/caldera.yml
 
-# 4. Build and start
+# 5. Build and start
 docker compose up --build
 ```
 
@@ -90,6 +94,12 @@ curl -X POST http://localhost:8001/chat \
   -d '{"message": "Run a PowerShell execution test on agent abc123"}'
 ```
 
+**Reset conversation history (development):**
+
+```bash
+curl -X POST http://localhost:8001/reset
+```
+
 ## Notes
 
 - `attacks/atomics` must be initialised via `git submodule update --init` before
@@ -100,3 +110,6 @@ curl -X POST http://localhost:8001/chat \
 - The Windows target VM needs the Caldera sandcat agent running and reachable on
   port 7010 of the host running Docker.
 - Do not commit `config/caldera.yml` — only `config/caldera.example.yml` is tracked.
+- Ollama runs on the host, not in Docker. The red-agent container reaches it via
+  `host.docker.internal:11434`. Set `OLLAMA_MODEL=qwen2.5:7b` in `.env` if tool
+  calls fail with `llama3.1:8b`.
