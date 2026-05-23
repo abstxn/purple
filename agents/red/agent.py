@@ -68,6 +68,7 @@ class RedAgent:
                 model=self.model,
                 messages=self._build_messages(),
                 tools=TOOLS,
+                temperature=0.0
             )
 
             choice = response.choices[0]

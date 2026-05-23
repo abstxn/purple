@@ -29,7 +29,9 @@ services:
     restart: unless-stopped
 
   red-agent:
-    build: ./agents/red
+    build:
+      context: .
+      dockerfile: agents/red/Dockerfile
     ports:
       - "8001:8001"
     environment:

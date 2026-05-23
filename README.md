@@ -107,9 +107,9 @@ curl -X POST http://localhost:8001/reset
 - Caldera data is ephemeral by default — it resets on container restart. This is
   intentional for clean test runs.
 - The `builder` plugin is disabled in Docker per Caldera's official guidance.
-- The Windows target VM needs the Caldera sandcat agent running and reachable on
-  port 7010 of the host running Docker.
-- Do not commit `config/caldera.yml` — only `config/caldera.example.yml` is tracked.
-- Ollama runs on the host, not in Docker. The red-agent container reaches it via
-  `host.docker.internal:11434`. Set `OLLAMA_MODEL=qwen2.5:7b` in `.env` if tool
-  calls fail with `llama3.1:8b`.
+- Components that run in Host
+  - The Windows target VM needs the Caldera sandcat agent running and reachable on
+    port 7010 of the host running Docker.
+  - Ollama runs on the host, not in Docker. The red-agent container reaches it via
+    `host.docker.internal:11434`. Set `OLLAMA_MODEL=qwen2.5:7b` in `.env` if tool
+    calls fail with `llama3.1:8b`.
