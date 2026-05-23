@@ -2,3 +2,4 @@
 	path = attacks/atomics
 	url = https://github.com/redcanaryco/atomic-red-team
 	shallow = true
+	ignore = dirty
